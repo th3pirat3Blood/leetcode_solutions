@@ -37,43 +37,59 @@ struct ListNode {
 class Solution {
     public:
         ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
-            ListNode *merged = nullptr, *temp = merged, *prev;
+            ListNode *merged = nullptr, *temp = merged, *prev = merged;
+            // If both lists are empty
             if (list1 == nullptr && list2 == nullptr)
-                return merged;
+                return nullptr;
 
             while (list1!=nullptr || list2!=nullptr) {
-                 // In case one of list reaches its ends just copy the second list as it is
-                 if (list1 == nullptr) {
-                    temp->next = list2;
+                // Handle if one of the list is nullptr
+                if (list1 == nullptr) {
+                    if (prev != nullptr)
+                        prev->next = list2;
+                    else
+                        merged = list2;
                     break;
-                }
+                } 
                 if (list2 == nullptr) {
-                    temp->next = list1;
+                    if (prev != nullptr)
+                        prev->next = list1;
+                    else
+                        merged = list1;
                     break;
                 }
 
-                // In case none of the list is nullptr
+                // Whichever list value is smaller add that into merged list
                 if (list1->val < list2->val) {
-                    temp = new ListNode(list1->val, temp);
-                    list1 = list1->next;                    
+                    temp = new ListNode(list1->val);
+                    if (prev !=nullptr)
+                        prev->next = temp;
+                    list1 = list1->next;
                 } else if (list2->val < list1->val) {
-                    temp = new ListNode(list2->val, temp);
+                    temp = new ListNode(list2->val);
+                    if (prev !=nullptr)
+                        prev->next = temp;
                     list2 = list2->next;
                 } else {
-                    temp = new ListNode(list1->val, temp);
-                    // temp = temp->next;
-                    temp = new ListNode(list2->val, temp);
+                    temp = new ListNode(list1->val);
+                    // For those special cases where duplicates are at the start
+                    if (merged == nullptr)
+                        merged = temp;
+                    if (prev !=nullptr)
+                        prev->next = temp;
+                    prev = temp;
+                    temp = new ListNode(list2->val);
+                    prev->next = temp;
                     list1 = list1->next;
                     list2 = list2->next;
                 }
-            }
-            
-            // Reverse list for correct order
-            while (temp!=nullptr) {
-                merged = new ListNode(temp->val, merged);
-                temp = temp->next;
-            }
-            
+
+                prev = temp;
+                
+                if (merged == nullptr)
+                    merged = temp;
+
+            }           
             return merged;        
         }
 };
